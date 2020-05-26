@@ -1,3 +1,5 @@
+This is the implementation of the proposed model *BertAttnGAN* for the COMP4471 project -- Text to image.
+
 **Datasets**:
 
 download the entire preprocessed CUB dataset here: https://drive.google.com/drive/folders/1LhVpVbDs9ySZ5TwmWCLNpsgJg_KOLF2f?usp=sharing
