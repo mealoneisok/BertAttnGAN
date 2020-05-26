@@ -7,6 +7,7 @@ download the Oxford flower image dataset here: https://www.robots.ox.ac.uk/~vgg/
 download mini-bert here: https://drive.google.com/drive/folders/14R0z40MyWp7Kt4wU4iKIimQ716U9KuP3?usp=sharing
 
 Requirements:
+* easydict
 * pytorch
 * transformers
 * pytorch_pretrained_bert
