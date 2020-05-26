@@ -6,11 +6,12 @@ download the Oxford flower image dataset here: https://www.robots.ox.ac.uk/~vgg/
 
 download mini-bert here: https://drive.google.com/drive/folders/14R0z40MyWp7Kt4wU4iKIimQ716U9KuP3?usp=sharing
 
-
-requirements
+Requirements:
 * pytorch
 * transformers
 * pytorch_pretrained_bert
 * Python 3.6
 
-
+Reference: 
+* https://github.com/hanzhanggit/StackGAN-v2
+* https://github.com/taoxugit/AttnGAN
