@@ -60,16 +60,6 @@ if __name__ == '__main__':
     train_id = np.array(filename_lst)[train_idx].tolist()
     test_id = np.array(filename_lst)[test_idx].tolist()
 
-    with open(path_processed + r'\train_idx.pkl', 'wb') as f:
-        pickle.dump(train_idx, f)
-    with open(path_processed + r'\test_idx.pkl', 'wb') as f:
-        pickle.dump(test_idx, f)
-
-    with open(path_processed + r'\train_id.pkl', 'wb') as f:
-        pickle.dump(train_id, f)
-    with open(path_processed + r'\test_id.pkl', 'wb') as f:
-        pickle.dump(test_id, f)
-
     caps_text = []
     for filename in filename_lst:
         path_cap = path_raw_text + '\\' + filename + '.txt'

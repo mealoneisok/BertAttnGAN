@@ -15,12 +15,9 @@ class BertAttnGANTrainer(object):
     def __init__(self, data_loader):
         torch.cuda.set_device(cfg.GPU_ID)
         cudnn.benchmark = True
-
         self.batch_size = cfg.TRAIN.BATCH_SIZE
         self.max_epoch = cfg.TRAIN.MAX_EPOCH
         self.snapshot_interval = cfg.TRAIN.SNAPSHOT_INTERVAL
-
-        self.n_words = n_words
         self.data_loader = data_loader
         self.num_batches = len(self.data_loader)
 
@@ -68,12 +65,12 @@ class BertAttnGANTrainer(object):
     def save_model(self, netG, avg_param_G, netsD, epoch):
         backup_para = copy_G_params(netG)
         load_params(netG, avg_param_G)
-        torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (self.model_dir, epoch))
+        torch.save(netG.state_dict(), 'netG_epoch_%d.pth' % (epoch))
         load_params(netG, backup_para)
         #
         for i in range(len(netsD)):
             netD = netsD[i]
-            torch.save(netD.state_dict(), '%s/netD%d.pth' % (self.model_dir, i))
+            torch.save(netD.state_dict(), 'netD%d.pth' % (i))
         print('Save G/Ds models.')
 
     def set_requires_grad_value(self, models_list, brequires):

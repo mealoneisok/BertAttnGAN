@@ -1,11 +1,9 @@
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.nn.functional as F
 from torch.autograd import Variable
 from pytorch_pretrained_bert import BertModel
 from config import cfg
-from GlobalAttention import GlobalAttentionGeneral as ATT_NET
+from GlobalAttention import GlobalAttentionGeneral
 
 class GLU(nn.Module):
     def __init__(self):
@@ -15,7 +13,7 @@ class GLU(nn.Module):
         nc = x.size(1)
         assert nc % 2 == 0, 'channels dont divide 2!'
         nc = int(nc/2)
-        return x[:, :nc] * F.sigmoid(x[:, nc:])
+        return x[:, :nc] * torch.sigmoid(x[:, nc:]) 
 
 def conv1x1(in_planes, out_planes, bias=False):
     "1x1 convolution with padding"
@@ -69,7 +67,7 @@ class BERT_ENCODER(nn.Module):
 
     def forward(self, caps, attn_masks, segs_ids):
         embs, sent_emb = self.bert_model(caps, attention_mask = attn_masks, token_type_ids = segs_ids)
-        words_emb = embs[0]
+        words_emb = embs[0].permute(0, 2, 1).contiguous()
         return words_emb, sent_emb
 
 # ############## G networks ###################
@@ -103,13 +101,11 @@ class CA_NET(nn.Module):
         c_code = self.reparametrize(mu, logvar)
         return c_code, mu, logvar
 
-
 class INIT_STAGE_G(nn.Module):
     def __init__(self, ngf, ncf):
         super(INIT_STAGE_G, self).__init__()
         self.gf_dim = ngf
-        self.in_dim = cfg.Z_DIM + ncf
-
+        self.in_dim = cfg.GAN.Z_DIM + ncf
         self.define_module()
 
     def define_module(self):
@@ -118,7 +114,6 @@ class INIT_STAGE_G(nn.Module):
             nn.Linear(nz, ngf * 4 * 4 * 2, bias=False),
             nn.BatchNorm1d(ngf * 4 * 4 * 2),
             GLU())
-
         self.upsample1 = upBlock(ngf, ngf // 2)
         self.upsample2 = upBlock(ngf // 2, ngf // 4)
         self.upsample3 = upBlock(ngf // 4, ngf // 8)
@@ -141,19 +136,18 @@ class INIT_STAGE_G(nn.Module):
         out_code32 = self.upsample3(out_code)
         return out_code32
 
-
 class NEXT_STAGE_G(nn.Module):
     def __init__(self, ngf, nef, ncf):
         super(NEXT_STAGE_G, self).__init__()
         self.gf_dim = ngf
         self.ef_dim = nef
         self.cf_dim = ncf
-        self.num_residual = cfg.R_NUM
+        self.num_residual = cfg.GAN.R_NUM
         self.define_module()
 
     def _make_layer(self, block, channel_num):
         layers = []
-        for i in range(cfg.R_NUM):
+        for i in range(self.num_residual):
             layers.append(block(channel_num))
         return nn.Sequential(*layers)
 
@@ -194,9 +188,9 @@ class GET_IMAGE_G(nn.Module):
 class G_NET(nn.Module):
     def __init__(self):
         super(G_NET, self).__init__()
-        ngf = cfg.GF_DIM
-        nef = cfg.EMBEDDING_DIM
-        ncf = cfg.CONDITION_DIM
+        ngf = cfg.GAN.GF_DIM
+        nef = cfg.TEXT.EMBEDDING_DIM
+        ncf = cfg.GAN.CONDITION_DIM
         self.ca_net = CA_NET()
 
         self.h_net1 = INIT_STAGE_G(ngf * 8, ncf)
@@ -324,8 +318,8 @@ class D_GET_LOGITS(nn.Module):
 class D_NET32(nn.Module):
     def __init__(self, b_jcu=True):
         super(D_NET32, self).__init__()
-        ndf = cfg.DF_DIM
-        nef = cfg.EMBEDDING_DIM
+        ndf = cfg.GAN.DF_DIM
+        nef = cfg.TEXT.EMBEDDING_DIM
         self.img_code_s8 = encode_image_by_8times(ndf)
         self.img_code_s8_1 = Block3x3_leakRelu(ndf * 4, ndf * 8)
         if b_jcu:
@@ -343,8 +337,8 @@ class D_NET32(nn.Module):
 class D_NET64(nn.Module):
     def __init__(self, b_jcu=True):
         super(D_NET64, self).__init__()
-        ndf = cfg.DF_DIM
-        nef = cfg.EMBEDDING_DIM
+        ndf = cfg.GAN.DF_DIM
+        nef = cfg.TEXT.EMBEDDING_DIM
         self.img_code_s16 = encode_image_by_16times(ndf)
         if b_jcu:
             self.UNCOND_DNET = D_GET_LOGITS(ndf, nef, bcondition=False)
@@ -360,8 +354,8 @@ class D_NET64(nn.Module):
 class D_NET128(nn.Module):
     def __init__(self, b_jcu=True):
         super(D_NET128, self).__init__()
-        ndf = cfg.DF_DIM
-        nef = cfg.EMBEDDING_DIM
+        ndf = cfg.GAN.DF_DIM
+        nef = cfg.TEXT.EMBEDDING_DIM
         self.img_code_s16 = encode_image_by_16times(ndf)
         self.img_code_s32 = downBlock(ndf * 8, ndf * 16)
         self.img_code_s32_1 = Block3x3_leakRelu(ndf * 16, ndf * 8)

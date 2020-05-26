@@ -2,7 +2,7 @@ import pickle
 import transformers
 import config as cfg
 
-dataroot = 'CUB\processed'
+dataroot = __C.DATA_DIR
 
 def to_bert_tokens(caps_text, tokenizer, max_len = None):
     caps_lst = []
@@ -58,8 +58,8 @@ if __name__ == '__main__':
     with open(dataroot + '/caps_text_test.pkl', 'rb') as f:
         caps_text_test = pickle.load(f)
     
-    caps_bert_train = to_bert_tokens(caps_text_train, tokenizer, max_len = cfg.MAX_LEN)
-    caps_bert_test = to_bert_tokens(caps_text_test, tokenizer, max_len = cfg.MAX_LEN)
+    caps_bert_train = to_bert_tokens(caps_text_train, tokenizer, max_len = cfg.TEXT.WORDS_NUM)
+    caps_bert_test = to_bert_tokens(caps_text_test, tokenizer, max_len = cfg.TEXT.WORDS_NUM)
     attn_mask_train = to_attention_mask(caps_bert_train)
     attn_mask_test = to_attention_mask(caps_bert_test)
     token_bert_train = to_bert_token_indices(caps_bert_train, tokenizer)

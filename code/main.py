@@ -1,12 +1,10 @@
-from config import cfg, cfg_from_file
+from config import cfg
 from datasets import TextDataset
 from trainer import BertAttnGANTrainer as trainer
 
 import os
 import sys
 import time
-import random
-import pprint
 import datetime
 import dateutil.tz
 import numpy as np
@@ -21,9 +19,9 @@ if __name__ == "__main__":
         split_dir = 'test'
 
     # Get data loader
-    imsize = cfg.TREE.BASE_SIZE * (2 ** (cfg.TREE.BRANCH_NUM - 1))
+    imsize = cfg.TREE.BASE_SIZE * (2 ** 2)
     image_transform = transforms.Compose([
-        transforms.Scale(int(imsize * 76 / 64)),
+        transforms.Resize(int(imsize * 76 / 64)),
         transforms.RandomCrop(imsize),
         transforms.RandomHorizontalFlip()])
     dataset = TextDataset(cfg.DATA_DIR, split_dir,

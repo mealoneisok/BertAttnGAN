@@ -26,7 +26,7 @@ def prepare_data(data):
 
 
 class TextDataset(Dataset):
-    def __init__(self, data_dir, split='train', base_size = cfg.BASE_SIZE, transform=None):
+    def __init__(self, data_dir, split='train', base_size = cfg.TREE.BASE_SIZE, transform=None):
         self.split = split
         self.data_dir = data_dir
         self.transform = transform
