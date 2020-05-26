@@ -12,11 +12,11 @@ download mini-bert here: https://drive.google.com/drive/folders/14R0z40MyWp7Kt4w
 
 **Requirements**:
 
+* Python **3.6**
 * easydict
 * pytorch
 * transformers
 * pytorch_pretrained_bert
-* Python 3.6
 
 **Reference**: 
 
