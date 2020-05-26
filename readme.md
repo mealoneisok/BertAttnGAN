@@ -16,3 +16,4 @@ Requirements:
 Reference: 
 * https://github.com/hanzhanggit/StackGAN-v2
 * https://github.com/taoxugit/AttnGAN
+* https://huggingface.co/google/bert_uncased_L-4_H-256_A-4
