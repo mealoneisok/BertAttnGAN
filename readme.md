@@ -8,7 +8,9 @@ download mini-bert here: https://drive.google.com/drive/folders/14R0z40MyWp7Kt4w
 
 
 requirements
-
-** Python 3.6
+* pytorch
+* transformers
+* pytorch_pretrained_bert
+* Python 3.6
 
 
