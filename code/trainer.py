@@ -166,7 +166,7 @@ class BertAttnGANTrainer(object):
                      errD_total.data.item(), errG_total.data.item(),
                      end_t - start_t))
 
-            if epoch % cfg.TRAIN.SNAPSHOT_INTERVAL == 0:  # and epoch != 0:
+            if epoch % cfg.TRAIN.SNAPSHOT_INTERVAL == 0 and epoch != 0:
                 self.save_model(netG, avg_param_G, netsD, epoch)
 
         self.save_model(netG, avg_param_G, netsD, self.max_epoch)
