@@ -1,8 +1,8 @@
 import pickle
 import transformers
-import config as cfg
+from config import cfg
 
-dataroot = __C.DATA_DIR
+dataroot = cfg.DATA_DIR
 
 def to_bert_tokens(caps_text, tokenizer, max_len = None):
     caps_lst = []
